@@ -1,0 +1,78 @@
+<html>
+  <head>
+    <title>freakyhax - 3DS homebrew exploit</title>
+    <style>
+      body { background-color: #222; }
+
+      #mid { width: 50%; margin-left: auto; margin-right: auto; }
+      
+      .post-header { margin-bottom: 30px; position: relative; }
+
+      h1 { color: #c9d0d4; font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif; font-size: 46px; font-weight: 100; line-height: 50px; letter-spacing: 1px; padding: 0; border-bottom: double #555; }
+
+      p { color: #bbc3c8; font-family: 'Verdana', sans-serif; font-size: 16px; line-height: 26px; padding-left: 30px; margin: 0; }
+
+      a { color: #c64119; border-bottom: 1px solid #c64119; text-decoration: none; }
+
+      a:hover { color: #993213; border-bottom: 1px solid #993213; }
+
+      .topic { color: #bbc3c8; background: #292929; display: inline-block; font-family: 'Georgia', serif; font-style: italic; font-size: 18px; line-height: 22px; margin: 10px 10px 10px 18px; padding: 10px 12px 8px; }
+    </style>
+  </head>
+  <body>
+    <div id="mid">
+      <h1>freakyhax</h1>
+      <div class="topic">Introduction</div>
+      <p>
+        freakyhax is a QR-code homebrew exploit for the 3DS game <a href="https://en.wikipedia.org/wiki/Freakyforms:_Your_Creations,_Alive!">Freakyforms Deluxe</a>.<br />
+      </p>
+      <div class="topic">Requirements</div>
+      <p>&middot; A EUR/USA copy of the game (either eShop or cartridge)</p>
+      <p>&middot; Recent 3DS firmware, including latest (<i>11.0.0-33</i>) as of this writing</p>
+      <div class="topic">Install</div>
+      <p>1. Get the latest version of <a href="#">freakyhax</a>, and extract it to the root of your sdcard.</p>
+      <p>2. Get the "otherapp payload" for your 3DS firmware from the <a href="https://smealum.github.io/3ds/">homebrew launcher</a> website.</p>
+      <p>3. Put the otherapp bin on your sdcard root and rename it to "otherapp.bin".</p>
+      <p>5. Get the homebrew starter kit from the <a href="https://smealum.github.io/3ds/">homebrew launcher</a> website and put it on your sdcard.</p>
+      <p>4. Start the game.</p>
+      <div class="topic">FAQ</div> 
+      <p><b>How do I trigger the exploit?</b></p>
+      <p>
+        In the game menu pick:<br />
+         Play &rarr; Camera &rarr; Load a QR code &rarr; pick the image.</p>
+      <p><b>It doesn't work!</b></p>
+      <p>Try the <a href="#troubleshooting">troubleshooting guide</a>. If that doesn't work, try the IRC channel #3dsdev on EFNet.</p>
+      <p><b>Why isn't the Japanese version supported?</b></p>
+      <p>It will be supported eventually.</p>
+      <p><b>How do I develop homebrew?</b></p>
+      <p>The <a href="https://3dbrew.org/">3dbrew wiki</a> has a tutorial how to setup the toolchain and build example code.</p>
+      <p><b>Where can I find other exploits?</b></p>
+      <p>You can find a summary of exploits on the <a href="https://3dbrew.org/wiki/Homebrew_Exploits">3dbrew wiki</a>.</p>
+      <a name="troubleshooting"></a>
+      <div class="topic">Troubleshooting</div>
+      <p>&middot; Make sure you have freaky.bin and the DCIM directory in your sdcard root.</p>
+      <p>&middot; Make sure you have a otherapp.bin in your sdcard root.</p>
+      <p>&middot; Make sure the otherapp.bin matches your firmware version, region and console type (new/old).</p>
+      <p>&middot; If none of the above helps, try <a href="#reset_save">resetting the save file</a>.</p>
+      <p>&middot; If it still doesn't work, come see us in #3dsdev at EFNet.</p>
+      <a name="reset_save"></a>
+      <div class="topic">Resetting save</div>
+      <p>1. Clear your save by holding A+B+X+Y when the game starts.</p>
+      <p>2. Set your planet name to "a".</p>
+      <p>3. With minimal effort create 5 formees with name "a", favourite phrase "a" (you have to go through the tutorial, unfortunately).</p>
+      <p>4. Remove all 5 formees.</p>
+      <p>5. Leave game and enter 3DS Settings. Move date one day forward.</p>
+      <p>6. Start the game again.</p>
+      <p>7. Create a formee with name "a" and favourite phrase "a".</p>
+      <p>8. Restart the game.</p>      
+      <p>9. Trigger the exploit.</p>      
+      <div class="topic">Thanks</div>
+      <p>&middot; smea - <3</p>
+      <p>&middot; yellows8 - help</p>
+      <p>&middot; fincs - help, testing</p>
+      <p>&middot; mtheall - testing</p>
+      <p>&middot; derrek - <3</p>
+      <p>Everyone else in the 3DS homebrew community!</p>
+    </div>
+  </body>
+</html>
