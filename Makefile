@@ -1,11 +1,13 @@
 .PHONY: all eur usa
 
 ################################################################################
-all: new_eur old_eur new_usa old_usa
+all: new_eur old_eur new_usa old_usa new_jap old_jap
 new_eur: build/new_eur/exploit/DCIM/100NIN03/HNI_0001.JPG build/new_eur/exploit/freaky.bin
 old_eur: build/old_eur/exploit/DCIM/100NIN03/HNI_0001.JPG build/old_eur/exploit/freaky.bin
 new_usa: build/new_usa/exploit/DCIM/100NIN03/HNI_0001.JPG build/new_usa/exploit/freaky.bin
 old_usa: build/old_usa/exploit/DCIM/100NIN03/HNI_0001.JPG build/old_usa/exploit/freaky.bin
+new_jap: build/new_jap/exploit/DCIM/100NIN03/HNI_0001.JPG build/new_jap/exploit/freaky.bin
+old_jap: build/old_jap/exploit/DCIM/100NIN03/HNI_0001.JPG build/old_jap/exploit/freaky.bin
 clean:
 	rm -rf build/
 
@@ -14,6 +16,8 @@ build/new_eur/stage0.elf: DEFINES := -DEUR -DNEW3DS
 build/old_eur/stage0.elf: DEFINES := -DEUR
 build/new_usa/stage0.elf: DEFINES := -DUSA -DNEW3DS
 build/old_usa/stage0.elf: DEFINES := -DUSA
+build/new_jap/stage0.elf: DEFINES := -DJAP -DNEW3DS
+build/old_jap/stage0.elf: DEFINES := -DJAP
 
 build/%/stage0.elf: src/stage0.s
 	mkdir -p $(dir $@)
@@ -36,6 +40,8 @@ build/new_eur/stage1.elf: DEFINES := -DEUR -DNEW3DS
 build/old_eur/stage1.elf: DEFINES := -DEUR
 build/new_usa/stage1.elf: DEFINES := -DUSA -DNEW3DS
 build/old_usa/stage1.elf: DEFINES := -DUSA
+build/new_jap/stage1.elf: DEFINES := -DJAP -DNEW3DS
+build/old_jap/stage1.elf: DEFINES := -DJAP
 
 build/%/stage1.elf: src/stage1.s
 	mkdir -p $(dir $@)
@@ -49,6 +55,8 @@ build/new_eur/stage2.elf: DEFINES := -DEUR -DNEW3DS
 build/old_eur/stage2.elf: DEFINES := -DEUR
 build/new_usa/stage2.elf: DEFINES := -DUSA -DNEW3DS
 build/old_usa/stage2.elf: DEFINES := -DUSA
+build/new_jap/stage2.elf: DEFINES := -DJAP -DNEW3DS
+build/old_jap/stage2.elf: DEFINES := -DJAP
 
 build/%/stage2.elf: src/stage2.s
 	mkdir -p $(dir $@)
