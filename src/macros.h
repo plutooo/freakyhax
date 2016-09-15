@@ -17,13 +17,10 @@
 #define PA_TO_GPU_ADDR(pa) ((pa) - 0x0C000000)
 #define GPU_TO_PA_ADDR(pa) ((pa) + 0x0C000000)
 
-/* Apparently JAP code is a bit smaller than the other ones, making code.bin
-   being allocated at a slightly different address. */
-REGION_CONST(NEW_VA_TO_PA, 0x27700000, 0x27700000, 0x27800000);
-REGION_CONST(OLD_VA_TO_PA, 0x23B00000, 0x23B00000, 0x23C00000);
-
 #if defined(NEW3DS)
-#define CODE_VA_TO_PA(va) ((va) + NEW_VA_TO_PA)
+#define APPLICATION_HEAP_END (0x20000000 + 0x07C00000)
 #else
-#define CODE_VA_TO_PA(va) ((va) + OLD_VA_TO_PA)
+#define APPLICATION_HEAP_END (0x20000000 + 0x04000000)
 #endif
+
+#define CODE_VA_TO_PA(va) ((va) + APPLICATION_HEAP_END - (GAME_CODEBIN_SIZE &~ 0xFFFFF))
